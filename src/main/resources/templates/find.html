@@ -1,0 +1,160 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>Locate my caller</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<script type="text/javascript" src="/webjars/jquery/2.0.3/jquery.min.js"></script>
+<script type="text/javascript"
+	src="/webjars/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+<script type="text/javascript"
+	src="https://www.google.com/jsapi?autoload={'modules':[{'name':'visualization','version':'1.1','packages':['geochart']}]}"></script>
+<link rel='stylesheet'
+	href='/webjars/bootstrap/3.3.5/css/bootstrap.min.css' />
+
+<script>
+// 	google.setOnLoadCallback(drawRegionsMap);
+
+// 	function drawRegionsMap(data) {
+
+		
+
+// 		var options = {};
+
+// 		var chart = new google.visualization.GeoChart(document
+// 				.getElementById('regions_div'));
+
+// 		//chart.draw(data, options);
+// 	}
+</script>
+<script>
+	function renderMap() {
+		var client_id = location.pathname.split("/")[2];
+		//alert(client_id);
+		var dataTable;
+		$.getJSON("/locate/" + client_id, function(result) {
+			
+			dataTable = new google.visualization.DataTable();
+            dataTable.addColumn('string', 'Country', 'country');
+            dataTable.addColumn('string', 'Carrier', 'carrier');
+            //dataTable.addColumn('string', 'Phone', 'phone');
+            //dataTable.addColumn('string', 'Formatted Phone');
+			
+            //console.log("JSON string is " + JSON.stringify(result, null, 2));
+            
+			$.each(result, function(i, val){
+				console.log("Fields are " + val + " " + i);
+				console.log("CC is " + val.current_carrier.country);
+				console.log("CC2 is " + val.current_carrier.name);
+				//dataTable.addRow([val.current_carrier.country, val.current_carrier.name, i, val.national_format_number]);
+				dataTable.addRow([val.current_carrier.country, val.current_carrier.name + "|" + i]);
+				//dataTable.addRow([val.current_carrier.country, val.current_carrier.name, i]);
+	        });
+
+			
+
+			
+			
+			var options = {};
+
+            var chart = new google.visualization.GeoChart(document
+                    .getElementById('regions_div'));
+
+            chart.draw(dataTable, options);
+            
+            
+            google.visualization.events
+            .addListener(
+                    chart,
+                    'select',
+                    function() {
+                    	
+                    	$("#myModal").modal('show');
+                        var selectedItem = chart
+                                .getSelection()[0];
+                        alert(selectedItem);
+                        if (selectedItem) {
+                            alert(selectedItem);
+                            var country = dataTable
+                                    .getValue(
+                                            selectedItem.row,
+                                            1);
+                            //alert(country);
+                            $("#phoneNumber").text(country);
+                            if (country == 'US') {
+                                alert('ciao')
+                            }
+                            ;
+                        }
+
+                    });
+           
+			});
+		
+		
+		
+	}
+</script>
+<script>
+	$(function() {
+		$('#cancel').on('click', function (e) {
+		     //your awesome code here
+			 $('#myModal').modal('hide');
+		})
+		renderMap();
+			});
+</script>
+<style>
+.custom-search-form {
+	margin-top: 5px;
+}
+</style>
+</head>
+<body>
+	<!--     <p th:text="'Hello, ' + ${name} + '!'" /> -->
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-3">
+				<div class="input-group custom-search-form">
+					<input id="phone_number" type="text" class="form-control">
+					<span class="input-group-btn">
+						<button id="search" class="btn btn-default" type="button">
+							<span class="glyphicon glyphicon-search"></span>
+
+						</button>
+					</span> </input>
+				</div>
+				<!-- /input-group -->
+			</div>
+		</div>
+		<div id="regions_div" style="width: 900px; height: 500px;"></div>
+	</div>
+	<button type="button" class="btn btn-info btn-lg" data-toggle="modal"
+		data-target="#myModal">Open Modal</button>
+</body>
+
+<!-- Modal -->
+<div id="myModal" class="modal fade" role="dialog">
+	<div class="modal-dialog">
+
+		<!-- Modal content-->
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Text this caller</h4>
+			</div>
+			<div class="modal-body">
+				<p id="phoneNumber">Some text in the modal.</p>
+				<div class="form-group">
+                    <label for="message">Message</label> 
+                     <textarea class="form-control" rows="3"></textarea>
+                </div>
+			</div>
+			<div class="modal-footer">
+			    <input type="submit" value="Send" class="btn btn-success"/> 
+                <input id="cancel" type="reset" value="Cancel" class="btn btn-danger"/>
+			</div>
+		</div>
+
+	</div>
+</div>
+</html>
