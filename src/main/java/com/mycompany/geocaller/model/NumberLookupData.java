@@ -27,10 +27,10 @@ public class NumberLookupData {
   
   @Override
   public String toString() {
-    return "NumberLookupData [status=" + status + ", statusMessage=" + statusMessage
-        + ", intlNumberFormat=" + intlNumberFormat + ", ntlNumberFormat=" + ntlNumberFormat
-        + ", countryCode=" + countryCode + ", countryPrefix=" + countryPrefix + ", carrierData="
-        + carrierData + ", originalCarrier=" + originalCarrier + "]";
+    return "NumberLookupData [status=" + status + "\nstatusMessage=" + statusMessage
+        + "\nintlNumberFormat=" + intlNumberFormat + "\nntlNumberFormat=" + ntlNumberFormat
+        + "\ncountryCode=" + countryCode + "\ncountryPrefix=" + countryPrefix + "\ncarrierData="
+        + carrierData + "\noriginalCarrier=" + originalCarrier + "]";
   }
 
   @JsonProperty("current_carrier")

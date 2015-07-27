@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
 
 import com.mycompany.geocaller.model.NumberLookupData;
+import com.sendgrid.SendGrid;
+import com.sendgrid.SendGridException;
 
 @SpringBootApplication
 @Controller
@@ -59,7 +61,7 @@ public class GeocallerApplication {
      
           clientPhoneData().put(clientId, numberDataMap);
         }
-        sendMail(clientId);
+        sendMail(clientId, response.toString());
       }
       System.out.println("Status is " + status);
       return status;
@@ -71,8 +73,23 @@ public class GeocallerApplication {
       return clientPhoneData().get(clientId);
     }
     
-    private void sendMail(String email) {
-      
-    }
+    private void sendMail(String emailAddress, String message) {
+      System.out.println("Email address is " + emailAddress);
+      SendGrid sendgrid = new SendGrid("ahmed.bhaila", "4leafclover");
+
+      SendGrid.Email email = new SendGrid.Email();
+      email.addTo(emailAddress);
+      email.setFrom("other@example.com");
+      email.setSubject("Caller Geolocation");
+      email.setText(message);
+
+      try {
+        SendGrid.Response response = sendgrid.send(email);
+        System.out.println(response.getMessage());
+      }
+      catch (SendGridException e) {
+        System.out.println(e);
+      }
     
+    }
 }

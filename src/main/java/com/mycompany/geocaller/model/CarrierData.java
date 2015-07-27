@@ -6,6 +6,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class CarrierData {
   
+  @Override
+  public String toString() {
+    return "CarrierData [name=" + name + "\ncountry=" + country + " \ntype=" + type + "]";
+  }
   @JsonProperty("name")
   protected String name;
   
