@@ -29,7 +29,6 @@
 <script>
 	function renderMap() {
 		var client_id = location.pathname.split("/")[2];
-		//alert(client_id);
 		var dataTable;
 		$.getJSON("/locate/" + client_id, function(result) {
 			
@@ -42,9 +41,6 @@
             //console.log("JSON string is " + JSON.stringify(result, null, 2));
             
 			$.each(result, function(i, val){
-				console.log("Fields are " + val + " " + i);
-				console.log("CC is " + val.current_carrier.country);
-				console.log("CC2 is " + val.current_carrier.name);
 				//dataTable.addRow([val.current_carrier.country, val.current_carrier.name, i, val.national_format_number]);
 				dataTable.addRow([val.current_carrier.country, val.current_carrier.name + "|" + i]);
 				//dataTable.addRow([val.current_carrier.country, val.current_carrier.name, i]);
@@ -71,19 +67,20 @@
                     	$("#myModal").modal('show');
                         var selectedItem = chart
                                 .getSelection()[0];
-                        alert(selectedItem);
                         if (selectedItem) {
-                            alert(selectedItem);
-                            var country = dataTable
+                            var phoneData = dataTable
                                     .getValue(
                                             selectedItem.row,
                                             1);
-                            //alert(country);
-                            $("#phoneNumber").text(country);
-                            if (country == 'US') {
-                                alert('ciao')
-                            }
-                            ;
+                            var countryCode = dataTable
+                            .getValue(
+                                    selectedItem.row,
+                                    0);
+                            var data = phoneData.split("|");
+                            $("#phoneNumber").text(data[1]);
+                            $("#carrier").text(data[0]);
+                            $("#country").text(countryCode);
+                            
                         }
 
                     });
@@ -100,6 +97,19 @@
 		     //your awesome code here
 			 $('#myModal').modal('hide');
 		})
+		
+		$('#send').on('click', function (e) {
+			alert("Message is " + $('#message').val());
+			$.post("/text/" + "12033189214" + "/" + $('#phoneNumber').text(),
+				    {
+				        message: $('#message').val(),
+				    },
+				    function(data, status){
+				        alert("Status: " + status);
+				    });
+             //your awesome code here
+             $('#myModal').modal('hide');
+        })
 		renderMap();
 			});
 </script>
@@ -110,8 +120,7 @@
 </style>
 </head>
 <body>
-	<!--     <p th:text="'Hello, ' + ${name} + '!'" /> -->
-	<div class="container">
+		<div class="container">
 		<div class="row">
 			<div class="col-lg-3">
 				<div class="input-group custom-search-form">
@@ -125,11 +134,10 @@
 				</div>
 				<!-- /input-group -->
 			</div>
+			<div id="regions_div" style="width: 900px; height: 500px;"></div>
 		</div>
-		<div id="regions_div" style="width: 900px; height: 500px;"></div>
+		
 	</div>
-	<button type="button" class="btn btn-info btn-lg" data-toggle="modal"
-		data-target="#myModal">Open Modal</button>
 </body>
 
 <!-- Modal -->
@@ -144,13 +152,15 @@
 			</div>
 			<div class="modal-body">
 				<p id="phoneNumber">Some text in the modal.</p>
+				<p id="carrier">Some text in the modal.</p>
+				<p id="country">Some text in the modal.</p>
 				<div class="form-group">
                     <label for="message">Message</label> 
-                     <textarea class="form-control" rows="3"></textarea>
+                     <textarea id="message" class="form-control" rows="3"></textarea>
                 </div>
 			</div>
 			<div class="modal-footer">
-			    <input type="submit" value="Send" class="btn btn-success"/> 
+			    <input id="send" type="submit" value="Send" class="btn btn-success"/> 
                 <input id="cancel" type="reset" value="Cancel" class="btn btn-danger"/>
 			</div>
 		</div>
