@@ -65,11 +65,12 @@
 		})
 
 		$('#send').on('click', function(e) {
-			alert("Message is " + $('#message').val());
+			alert($('#message').val());
 			$.post("/text/" + "12033189214" + "/" + $('#phoneNumber').text(), {
+			    
 				message : $('#message').val(),
 			}, function(data, status) {
-				alert("Status: " + status);
+				
 			});
 			$('#myModal').modal('hide');
 		})

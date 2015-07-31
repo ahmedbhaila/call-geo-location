@@ -1,5 +1,6 @@
 package com.mycompany.geocaller;
 
+import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -113,8 +114,7 @@ public class GeocallerApplication {
     
     @RequestMapping(method = RequestMethod.POST, value = "/text/{from}/{to}")
     @ResponseBody
-    private void sendSMS(@PathVariable("from") String from, @PathVariable("to") String to, @RequestBody String message) {
-      System.out.println("From is " + from + " and to is " + to + "Message is " + message);
-      System.out.println(restTemplate().getForObject(NEXMO_SMS_API_URL, String.class, nexmoApiKey, nexmoApiSecret, from, to, message));
+    private void sendSMS(@PathVariable("from") String from, @PathVariable("to") String to, @RequestBody String message) throws Exception {
+      System.out.println(restTemplate().getForObject(NEXMO_SMS_API_URL, String.class, nexmoApiKey, nexmoApiSecret, from, to, URLDecoder.decode(message, "UTF-8")));
     }
 }
