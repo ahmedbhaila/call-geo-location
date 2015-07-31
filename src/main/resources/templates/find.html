@@ -1,6 +1,8 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Locate my caller</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <script type="text/javascript" src="/webjars/jquery/2.0.3/jquery.min.js"></script>
@@ -12,131 +14,110 @@
 	href='/webjars/bootstrap/3.3.5/css/bootstrap.min.css' />
 
 <script>
-// 	google.setOnLoadCallback(drawRegionsMap);
-
-// 	function drawRegionsMap(data) {
-
-		
-
-// 		var options = {};
-
-// 		var chart = new google.visualization.GeoChart(document
-// 				.getElementById('regions_div'));
-
-// 		//chart.draw(data, options);
-// 	}
-</script>
-<script>
 	function renderMap() {
 		var client_id = location.pathname.split("/")[2];
 		var dataTable;
 		$.getJSON("/locate/" + client_id, function(result) {
-			
+
 			dataTable = new google.visualization.DataTable();
-            dataTable.addColumn('string', 'Country', 'country');
-            dataTable.addColumn('string', 'Carrier', 'carrier');
-            //dataTable.addColumn('string', 'Phone', 'phone');
-            //dataTable.addColumn('string', 'Formatted Phone');
-			
-            //console.log("JSON string is " + JSON.stringify(result, null, 2));
-            
-			$.each(result, function(i, val){
-				//dataTable.addRow([val.current_carrier.country, val.current_carrier.name, i, val.national_format_number]);
-				dataTable.addRow([val.current_carrier.country, val.current_carrier.name + "|" + i]);
-				//dataTable.addRow([val.current_carrier.country, val.current_carrier.name, i]);
-	        });
+			dataTable.addColumn('string', 'Country', 'country');
+			dataTable.addColumn('string', 'Carrier', 'carrier');
 
-			
+			$.each(result, function(i, val) {
+				dataTable.addRow([ val.current_carrier.country,
+						val.current_carrier.name + "|" + i ]);
+			});
 
-			
-			
 			var options = {};
 
-            var chart = new google.visualization.GeoChart(document
-                    .getElementById('regions_div'));
+			var chart = new google.visualization.GeoChart(document
+					.getElementById('regions_div'));
 
-            chart.draw(dataTable, options);
-            
-            
-            google.visualization.events
-            .addListener(
-                    chart,
-                    'select',
-                    function() {
-                    	
-                    	$("#myModal").modal('show');
-                        var selectedItem = chart
-                                .getSelection()[0];
-                        if (selectedItem) {
-                            var phoneData = dataTable
-                                    .getValue(
-                                            selectedItem.row,
-                                            1);
-                            var countryCode = dataTable
-                            .getValue(
-                                    selectedItem.row,
-                                    0);
-                            var data = phoneData.split("|");
-                            $("#phoneNumber").text(data[1]);
-                            $("#carrier").text(data[0]);
-                            $("#country").text(countryCode);
-                            
-                        }
+			chart.draw(dataTable, options);
 
-                    });
-           
-			});
-		
-		
-		
+			google.visualization.events.addListener(chart, 'select',
+					function() {
+
+						$("#myModal").modal('show');
+						var selectedItem = chart.getSelection()[0];
+						if (selectedItem) {
+							var phoneData = dataTable.getValue(
+									selectedItem.row, 1);
+							var countryCode = dataTable.getValue(
+									selectedItem.row, 0);
+							var data = phoneData.split("|");
+							$("#phoneNumber").text(data[1]);
+							$("#carrier").text(data[0]);
+							$("#country").text(countryCode);
+
+						}
+
+					});
+
+		});
+
 	}
 </script>
 <script>
 	$(function() {
-		$('#cancel').on('click', function (e) {
-		     //your awesome code here
-			 $('#myModal').modal('hide');
+		$('#cancel').on('click', function(e) {
+			$('#myModal').modal('hide');
 		})
-		
-		$('#send').on('click', function (e) {
+
+		$('#send').on('click', function(e) {
 			alert("Message is " + $('#message').val());
-			$.post("/text/" + "12033189214" + "/" + $('#phoneNumber').text(),
-				    {
-				        message: $('#message').val(),
-				    },
-				    function(data, status){
-				        alert("Status: " + status);
-				    });
-             //your awesome code here
-             $('#myModal').modal('hide');
-        })
-		renderMap();
+			$.post("/text/" + "12033189214" + "/" + $('#phoneNumber').text(), {
+				message : $('#message').val(),
+			}, function(data, status) {
+				alert("Status: " + status);
 			});
+			$('#myModal').modal('hide');
+		})
+		renderMap();
+	});
 </script>
 <style>
 .custom-search-form {
 	margin-top: 5px;
 }
+body {
+  padding-top: 50px;
+}
+.starter-template {
+  padding: 40px 15px;
+  text-align: center;
+}
 </style>
 </head>
 <body>
+	<nav class="navbar navbar-inverse navbar-fixed-top">
 		<div class="container">
-		<div class="row">
-			<div class="col-lg-3">
-				<div class="input-group custom-search-form">
-					<input id="phone_number" type="text" class="form-control">
-					<span class="input-group-btn">
-						<button id="search" class="btn btn-default" type="button">
-							<span class="glyphicon glyphicon-search"></span>
-
-						</button>
-					</span> </input>
-				</div>
-				<!-- /input-group -->
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle collapsed"
+					data-toggle="collapse" data-target="#navbar" aria-expanded="false"
+					aria-controls="navbar">
+					<span class="sr-only">Toggle navigation</span> <span
+						class="icon-bar"></span> <span class="icon-bar"></span> <span
+						class="icon-bar"></span>
+				</button>
+				<a class="navbar-brand" href="#">Missed Calls - Geolocation</a>
 			</div>
-			<div id="regions_div" style="width: 900px; height: 500px;"></div>
+			<div id="navbar" class="collapse navbar-collapse">
+				<ul class="nav navbar-nav">
+<!-- 					<li class="active"><a href="#">Home</a></li> -->
+<!-- 					<li><a href="#about">About</a></li> -->
+<!-- 					<li><a href="#contact">Contact</a></li> -->
+				</ul>
+			</div>
+			<!--/.nav-collapse -->
 		</div>
-		
+	</nav>
+	<div class="container">
+		<div class="starter-template">
+			<div class="row">
+				<div id="regions_div" style="width: 900px; height: 500px;"></div>
+			</div>
+		</div>
 	</div>
 </body>
 
@@ -155,13 +136,14 @@
 				<p id="carrier">Some text in the modal.</p>
 				<p id="country">Some text in the modal.</p>
 				<div class="form-group">
-                    <label for="message">Message</label> 
-                     <textarea id="message" class="form-control" rows="3"></textarea>
-                </div>
+					<label for="message">Message</label>
+					<textarea id="message" class="form-control" rows="3"></textarea>
+				</div>
 			</div>
 			<div class="modal-footer">
-			    <input id="send" type="submit" value="Send" class="btn btn-success"/> 
-                <input id="cancel" type="reset" value="Cancel" class="btn btn-danger"/>
+				<input id="send" type="submit" value="Send" class="btn btn-success" />
+				<input id="cancel" type="reset" value="Cancel"
+					class="btn btn-danger" />
 			</div>
 		</div>
 
