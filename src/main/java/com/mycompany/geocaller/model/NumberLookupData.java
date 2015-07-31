@@ -27,10 +27,9 @@ public class NumberLookupData {
   
   @Override
   public String toString() {
-    return "NumberLookupData [status=" + status + "\nstatusMessage=" + statusMessage
-        + "\nintlNumberFormat=" + intlNumberFormat + "\nntlNumberFormat=" + ntlNumberFormat
-        + "\ncountryCode=" + countryCode + "\ncountryPrefix=" + countryPrefix + "\ncarrierData="
-        + carrierData + "\noriginalCarrier=" + originalCarrier + "]";
+    return "International Number Format = " + intlNumberFormat + " - " + ntlNumberFormat
+        + "\n Country Code = " + countryCode + "\nCountry Prefix = " + countryPrefix + "\n Carrier Related Data= "
+        + carrierData.toString();
   }
 
   @JsonProperty("current_carrier")

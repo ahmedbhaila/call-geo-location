@@ -8,7 +8,7 @@ public class CarrierData {
   
   @Override
   public String toString() {
-    return "CarrierData [name=" + name + "\ncountry=" + country + " \ntype=" + type + "]";
+    return "CarrierData \n Name = " + name + "\nCountry = " + country + " \nType=" + type;
   }
   @JsonProperty("name")
   protected String name;

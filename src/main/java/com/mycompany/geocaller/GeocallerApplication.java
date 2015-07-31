@@ -80,7 +80,7 @@ public class GeocallerApplication {
      
           clientPhoneData().put(clientId, numberDataMap);
         }
-        sendMail(clientId, response.toString());
+        sendMail(clientId, response.toString() + "\n" + "Check your missed call map: https://enigmatic-taiga-3619.herokuapp.com/map/" + clientId);
       }
       System.out.println("Status is " + status);
       return status;
